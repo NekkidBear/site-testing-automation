@@ -1,189 +1,193 @@
 # Website Testing Framework
 
-A comprehensive automated testing framework developed by Gymnarctos Studios for web property quality assurance. This framework tests accessibility, performance, SEO, and visual appearance across multiple browsers.
+A comprehensive automated testing framework for web properties that covers all aspects of web testing including performance, accessibility, SEO, visual regression, language quality, and security.
 
 ## Features
 
-- 🔍 **URL Collection**: Automatically collect URLs from sitemaps or by crawling pages
-- 🚀 **Performance Testing**: Lighthouse performance metrics
-- ♿ **Accessibility Testing**: WCAG compliance using axe-core
-- 🔎 **SEO Testing**: Meta tags, headings, and other SEO factors
-- 👁️ **Visual Regression**: Compare screenshots to detect visual changes
-- 📊 **Reporting**: Comprehensive HTML and JSON reports
-- 🔔 **Notifications**: Email alerts for test failures
+- **Performance Testing** (Lighthouse)
+  - Page load metrics
+  - Core Web Vitals
+  - Performance scoring
+  - Resource optimization
 
-## Prerequisites
+- **Accessibility Testing** (axe-core)
+  - WCAG compliance
+  - Automated checks
+  - Detailed violation reports
+  - Remediation suggestions
 
-- Node.js (v14+)
-- Chrome browser (for Lighthouse and visual tests)
-- Java Runtime Environment (for Selenium WebDriver)
+- **SEO Testing**
+  - Meta tags analysis
+  - Heading structure
+  - Link analysis
+  - Google Search Console integration
+  - Content optimization suggestions
+
+- **Visual Regression Testing** (BackstopJS)
+  - Cross-browser testing
+  - Responsive design validation
+  - Visual diff reports
+  - Multiple viewport testing
+
+- **Language Quality** (LanguageTool)
+  - Grammar checking
+  - Spell checking
+  - Style consistency
+  - Multi-language support
+
+- **Security Headers**
+  - HTTP header analysis
+  - Security best practices
+  - Cache configuration
+  - SSL/TLS validation
+
+- **Comprehensive Reporting**
+  - HTML reports
+  - Email notifications
+  - Slack/Teams integration
+  - Trend analysis
 
 ## Installation
 
-```bash
-# Clone the repository
-git clone https://github.com/gymnarctos-studios/website-testing-framework.git
+1. Clone the repository:
+   ```bash
+   git clone https://github.com/your-org/website-testing-framework.git
+   cd website-testing-framework
+   ```
 
-# Install dependencies
-npm install
+2. Install dependencies:
+   ```bash
+   npm install
+   ```
 
-# Create .env file from example
-cp .env.example .env
-```
+3. Copy the environment configuration:
+   ```bash
+   cp src/.env.example .env
+   ```
+
+4. Update the `.env` file with your configuration values.
 
 ## Configuration
 
-Configure the framework through environment variables in `.env`:
+The framework is highly configurable through environment variables. See `.env.example` for all available options:
 
-```env
-# API and Service Keys
-API_KEY=your_api_key_here
-
-# SMTP Configuration
-SMTP_HOST=smtp.gmail.com
-SMTP_PORT=587
-SMTP_USER=gymnarctosstudiosllc@gmail.com
-SMTP_PASS=your-app-password
-REPORT_EMAIL=gymnarctosstudiosllc@gmail.com
-
-# Website Configuration
-WEBSITE_URL=https://gymnarctosstudiosllc.com
-SITEMAP_URL=https://gymnarctosstudiosllc.com/sitemap.xml
-CRAWL_DEPTH=3
-
-# Browser Configuration
-HEADLESS=true
-WINDOW_WIDTH=1366
-WINDOW_HEIGHT=768
-IMPLICIT_TIMEOUT=10000
-EXPLICIT_TIMEOUT=30000
-SCREENSHOT_DIR=./reports/screenshots
-```
-
-## Project Structure
-
-```
-website-testing-framework/
-├── src/
-│   ├── config/
-│   │   ├── selenium-config.js       # Selenium WebDriver configuration
-│   │   └── email-config.js          # Email configuration
-│   ├── core/
-│   │   ├── crawler.js               # Web crawler functionality
-│   │   ├── sitemap-parser.js        # Sitemap XML parser
-│   │   └── url-collector.js         # URL collection logic
-│   ├── tests/
-│   │   ├── accessibility-tests.js   # Accessibility compliance tests
-│   │   ├── lighthouse-tests.js      # Performance testing
-│   │   ├── seo-tests.js            # SEO factor tests
-│   │   ├── visual-regression.js     # Visual comparison tests
-│   │   └── e2e-tests.js            # End-to-end testing
-│   ├── reports/
-│   │   ├── report-generator.js      # Report generation
-│   │   └── email-sender.js          # Email reporting
-│   ├── utils/
-│   │   ├── logger.js               # Logging functionality
-│   │   └── helpers.js              # Utility functions
-│   └── index.js                    # Application entry point
-├── reports/
-│   ├── screenshots/                # Test screenshots
-│   ├── visual-diffs/              # Visual difference images
-│   └── test-results/              # JSON and HTML results
-```
+- Email settings for notifications
+- Google API credentials
+- Testing thresholds
+- Feature flags
+- Debug settings
+- And more...
 
 ## Usage
 
-### Running Tests
-
+Run all tests:
 ```bash
-# Run all tests
 npm test
+```
 
-# Run specific test suites
-npm run test:perf    # Performance only
-npm run test:a11y    # Accessibility only
-npm run test:seo     # SEO only
-npm run test:visual  # Visual regression only
-npm run test:e2e     # End-to-end tests only
+Run specific test suites:
+```bash
+npm run test:perf      # Performance tests
+npm run test:a11y      # Accessibility tests
+npm run test:seo       # SEO tests
+npm run test:visual    # Visual regression tests
+npm run test:language  # Language quality tests
+npm run test:headers   # Security headers tests
+npm run test:unit      # Unit tests
+npm run test:integration # Integration tests
+```
 
-# View the latest report
+View the latest report:
+```bash
 npm run report
 ```
 
-### Test Workflow
+## Visual Regression Testing
 
-1. **URL Collection**
-   - Parses website's sitemap.xml
-   - Falls back to crawling if sitemap unavailable
+For visual regression testing:
 
-2. **Test Execution**
-   - Runs Lighthouse performance metrics
-   - Performs accessibility tests (WCAG compliance)
-   - Checks SEO factors
-   - Compares visual regression
-   - Executes end-to-end scenarios
+1. Generate reference images:
+   ```bash
+   npm run reference
+   ```
 
-3. **Reporting**
-   - Generates HTML/JSON reports
-   - Creates visual diff images
-   - Sends email notifications
+2. Compare against reference:
+   ```bash
+   npm run compare
+   ```
 
-### Automated Scheduling
+## Reports
 
-Set up automated test runs using your system's scheduler:
+Reports are generated in the `reports/test-results` directory:
+- HTML report with detailed test results
+- JSON data for programmatic access
+- Screenshots and visual diffs
+- Coverage reports for unit tests
 
-```bash
-# Linux/Mac (Cron example)
-0 0 * * * cd /path/to/framework && npm test
+## Notifications
 
-# Windows (create run-tests.bat)
-cd C:\path\to\framework
-npm test
-```
+The framework can send notifications through:
+- Email (using SMTP/Gmail)
+- Slack webhooks
+- Microsoft Teams webhooks
 
-## Use Cases
-
-- **Regular Testing**: Monitor website health daily/weekly
-- **Pre-deployment**: Validate changes before deployment
-- **Accessibility**: Ensure WCAG compliance
-- **SEO**: Monitor SEO factors across site
-
-## Troubleshooting
-
-- **Email Issues**: Use app password for Gmail
-- **Selenium Errors**: Verify browser driver installation
-- **Timeout Errors**: Adjust timeout values in .env
-
-## Dependencies
-
-- [Selenium WebDriver](https://www.selenium.dev/documentation/webdriver/) - Browser automation
-- [Lighthouse](https://developers.google.com/web/tools/lighthouse) - Performance auditing
-- [axe-core](https://github.com/dequelabs/axe-core) - Accessibility testing
-- [Puppeteer](https://pptr.dev/) - Headless browser automation
+Configure notification settings in the `.env` file.
 
 ## Contributing
 
-Contributions to improve the Website Testing Framework are welcome! Here's how you can contribute:
-
 1. Fork the repository
-2. Create a feature branch (`git checkout -b feature/your-feature-name`)
-3. Commit your changes (`git commit -m 'Add some feature'`)
-4. Push to the branch (`git push origin feature/your-feature-name`)
-5. Open a Pull Request
-
-Please make sure your code adheres to the existing style and includes appropriate tests.
-
-### Areas for Contribution
-
-- Additional test modules
-- Performance improvements
-- Better reporting formats
-- New browser support
-- Documentation improvements
+2. Create your feature branch
+3. Commit your changes
+4. Push to the branch
+5. Create a Pull Request
 
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
----
-© 2025 Gymnarctos Studios LLC
+## Dependencies
+
+Major dependencies include:
+- Lighthouse for performance testing
+- axe-core for accessibility testing
+- BackstopJS for visual regression
+- LanguageTool for language quality
+- Jest for unit testing
+- Puppeteer for browser automation
+- And more (see package.json)
+
+## Troubleshooting
+
+### Common Issues
+
+1. **Chrome/Puppeteer Issues**
+   - Ensure Chrome is installed
+   - Try running with --no-sandbox flag
+   - Check system dependencies
+
+2. **API Rate Limits**
+   - Configure MAX_REQUESTS_PER_SECOND
+   - Use appropriate API keys
+   - Check service quotas
+
+3. **Visual Regression Failures**
+   - Verify viewport sizes
+   - Check for dynamic content
+   - Adjust comparison threshold
+
+### Debug Mode
+
+Enable debug mode in `.env`:
+```
+DEBUG=true
+LOG_LEVEL=debug
+SAVE_HTML_SNAPSHOT=true
+SAVE_CONSOLE_LOGS=true
+```
+
+## Support
+
+For support, please:
+1. Check the documentation
+2. Search existing issues
+3. Create a new issue if needed

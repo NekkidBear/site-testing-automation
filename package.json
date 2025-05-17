@@ -10,7 +10,13 @@
     "test:seo": "node src/index.js --suite=seo",
     "test:visual": "node src/index.js --suite=visual",
     "test:e2e": "node src/index.js --suite=e2e",
-    "report": "open reports/test-results/latest.html"
+    "test:language": "node src/index.js --suite=language",
+    "test:headers": "node src/index.js --suite=headers",
+    "test:unit": "jest",
+    "test:integration": "jest --config jest.integration.js",
+    "report": "open reports/test-results/latest.html",
+    "reference": "backstop reference",
+    "compare": "backstop test"
   },
   "keywords": [
     "testing",
@@ -18,13 +24,19 @@
     "accessibility",
     "performance",
     "seo",
-    "visual-regression"
+    "visual-regression",
+    "language",
+    "security"
   ],
   "author": "Gymnarctos Studios LLC",
   "license": "MIT",
   "dependencies": {
     "@axe-core/webdriverjs": "^4.7.0",
+    "axios": "^1.4.0",
+    "backstopjs": "^6.1.4",
     "dotenv": "^16.0.3",
+    "googleapis": "^118.0.0",
+    "jest": "^29.5.0",
     "lighthouse": "^10.1.0",
     "nodemailer": "^6.9.3",
     "puppeteer": "^20.5.0",
@@ -32,11 +44,24 @@
     "winston": "^3.9.0"
   },
   "devDependencies": {
+    "@jest/globals": "^29.5.0",
     "eslint": "^8.41.0",
     "eslint-config-prettier": "^8.8.0",
+    "jest-junit": "^16.0.0",
     "prettier": "^2.8.8"
   },
   "engines": {
     "node": ">=14.0.0"
+  },
+  "jest": {
+    "testEnvironment": "node",
+    "coverageDirectory": "./reports/coverage",
+    "reporters": [
+      "default",
+      "jest-junit"
+    ],
+    "testMatch": [
+      "**/tests/unit/**/*.test.js"
+    ]
   }
 }
