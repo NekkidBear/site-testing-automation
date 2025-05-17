@@ -161,6 +161,26 @@ npm test
 - [axe-core](https://github.com/dequelabs/axe-core) - Accessibility testing
 - [Puppeteer](https://pptr.dev/) - Headless browser automation
 
+## Contributing
+
+Contributions to improve the Website Testing Framework are welcome! Here's how you can contribute:
+
+1. Fork the repository
+2. Create a feature branch (`git checkout -b feature/your-feature-name`)
+3. Commit your changes (`git commit -m 'Add some feature'`)
+4. Push to the branch (`git push origin feature/your-feature-name`)
+5. Open a Pull Request
+
+Please make sure your code adheres to the existing style and includes appropriate tests.
+
+### Areas for Contribution
+
+- Additional test modules
+- Performance improvements
+- Better reporting formats
+- New browser support
+- Documentation improvements
+
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
