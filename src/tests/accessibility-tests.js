@@ -1,41 +1,91 @@
-// filepath: /site-testing-automation/site-testing-automation/src/tests/accessibility-tests.js
-const { Builder, By, Key, until } = require('selenium-webdriver');
-const { SeleniumConfig } = require('../config/selenium-config');
-const { logInfo, logError } = require('../utils/logger');
+const axe = require('axe-core');
+const puppeteer = require('puppeteer');
+const logger = require('../utils/logger');
 
 /**
- * Runs accessibility tests on the provided URLs
- * @param {Array<string>} urls - The URLs to test
+ * Run accessibility tests using axe-core and WAVE
+ * @param {string} url - URL to test
+ * @returns {Promise<Object>} Test results
  */
-async function runAccessibilityTests(urls) {
-  const config = new SeleniumConfig();
-  const driver = await config.createDriver('chrome');
+async function runAccessibilityTests(url) {
+  logger.info(`Running accessibility tests for: ${url}`);
+  
+  try {
+    const browser = await puppeteer.launch({
+      headless: 'new',
+      args: ['--no-sandbox', '--disable-setuid-sandbox']
+    });
+    const page = await browser.newPage();
+    
+    // Inject axe-core
+    await page.goto(url);
+    await page.addScriptTag({ content: axe.source });
 
-  for (const url of urls) {
-    try {
-      await driver.get(url);
-      const isAccessible = await checkAccessibility(driver);
-      logInfo(`Accessibility test for ${url}: ${isAccessible ? 'Passed' : 'Failed'}`);
-    } catch (error) {
-      logError(`Error testing ${url}: ${error.message}`);
-    }
+    // Run axe analysis
+    const results = await page.evaluate(async () => {
+      return await axe.run();
+    });
+
+    await browser.close();
+
+    // Process results
+    const violations = results.violations.map(violation => ({
+      impact: violation.impact,
+      description: violation.description,
+      help: violation.help,
+      helpUrl: violation.helpUrl,
+      nodes: violation.nodes.map(node => ({
+        html: node.html,
+        failureSummary: node.failureSummary,
+        target: node.target
+      }))
+    }));
+
+    const incomplete = results.incomplete.map(check => ({
+      impact: check.impact,
+      description: check.description,
+      help: check.help,
+      helpUrl: check.helpUrl,
+      nodes: check.nodes.map(node => ({
+        html: node.html,
+        failureSummary: node.failureSummary,
+        target: node.target
+      }))
+    }));
+
+    // Calculate scores
+    const totalChecks = results.passes.length + violations.length;
+    const score = (results.passes.length / totalChecks) * 100;
+
+    return {
+      url,
+      timestamp: new Date().toISOString(),
+      score,
+      summary: {
+        violations: violations.length,
+        passes: results.passes.length,
+        incomplete: incomplete.length,
+        total: totalChecks
+      },
+      details: {
+        violations,
+        incomplete
+      },
+      engine: {
+        name: 'axe-core',
+        version: results.testEngine.version
+      }
+    };
+  } catch (error) {
+    logger.error(`Accessibility test failed for ${url}:`, error);
+    return {
+      url,
+      timestamp: new Date().toISOString(),
+      error: error.message
+    };
   }
-
-  await driver.quit();
-}
-
-/**
- * Checks the accessibility of the current page
- * @param {WebDriver} driver - The WebDriver instance
- * @returns {Promise<boolean>} - True if accessible, false otherwise
- */
-async function checkAccessibility(driver) {
-  // Implement accessibility checks here (e.g., using axe-core or similar)
-  // For demonstration, we will return true
-  return true;
 }
 
 module.exports = {
-  runAccessibilityTests,
-  checkAccessibility,
+  runAccessibilityTests
 };

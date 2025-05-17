@@ -1,14 +1,16 @@
+require('dotenv').config();
+
 class EmailConfig {
   constructor(config = {}) {
     this.config = {
-      host: config.host || 'smtp.example.com',
-      port: config.port || 587,
-      secure: config.secure || false,
-      user: config.user || 'your-email@example.com',
-      pass: config.pass || 'your-email-password',
-      from: config.from || 'your-email@example.com',
-      to: config.to || 'recipient@example.com',
-      subject: config.subject || 'Test Report',
+      host: process.env.SMTP_HOST || 'smtp.gmail.com',
+      port: parseInt(process.env.SMTP_PORT) || 587,
+      secure: process.env.SMTP_SECURE === 'true' || false,
+      user: process.env.GMAIL_USER,
+      pass: process.env.GMAIL_APP_PASSWORD,
+      from: process.env.EMAIL_FROM || process.env.GMAIL_USER,
+      to: process.env.EMAIL_TO,
+      subject: process.env.EMAIL_SUBJECT || 'Test Report',
       text: config.text || 'Please find the attached test report.',
       html: config.html || '<p>Please find the attached test report.</p>',
       ...config
