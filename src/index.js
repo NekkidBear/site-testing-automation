@@ -1,39 +1,54 @@
-// filepath: /site-testing-automation/site-testing-automation/src/index.js
-const SeleniumConfig = require('./config/selenium-config');
-const EmailConfig = require('./config/email-config');
-const Crawler = require('./core/crawler');
-const UrlCollector = require('./core/url-collector');
-const { runPageTests } = require('./tests/page-tests');
-const { runAccessibilityTests } = require('./tests/accessibility-tests');
-const { runPerformanceTests } = require('./tests/performance-tests');
-const ReportGenerator = require('./reports/report-generator');
-const EmailSender = require('./reports/email-sender');
+require('dotenv').config();
 const logger = require('./utils/logger');
+const urlCollector = require('./core/url-collector');
+const performanceTests = require('./tests/performance-tests');
+const accessibilityTests = require('./tests/accessibility-tests');
+const pageTests = require('./tests/page-tests');
+const reportGenerator = require('./reports/report-generator');
+const emailSender = require('./reports/email-sender');
 
-(async () => {
-    const seleniumConfig = new SeleniumConfig();
-    const emailConfig = new EmailConfig();
-    const crawler = new Crawler();
-    const urlCollector = new UrlCollector();
-    
-    try {
-        const sitemapUrl = 'https://gymnarctosstudiosllc.com/sitemap.xml';
-        const urls = await urlCollector.collectUrls(sitemapUrl);
+async function runTests() {
+  try {
+    logger.info('Starting website testing suite...');
 
-        for (const url of urls) {
-            await runPageTests(url);
-            await runAccessibilityTests(url);
-            await runPerformanceTests(url);
-        }
+    // Parse command line arguments for specific test suite
+    const args = process.argv.slice(2);
+    const suite = args.find(arg => arg.startsWith('--suite='))?.split('=')[1];
 
-        const reportGenerator = new ReportGenerator();
-        const reportPath = reportGenerator.generateReport(urls);
-        
-        const emailSender = new EmailSender(emailConfig);
-        await emailSender.sendReport(reportPath, 'Test Report', 'Please find the attached test report.');
+    // Collect URLs to test
+    const urls = await urlCollector.collect();
+    logger.info(`Collected ${urls.length} URLs for testing`);
 
-        logger.logInfo('Testing completed and report sent successfully.');
-    } catch (error) {
-        logger.logError('An error occurred during testing: ' + error.message);
+    const results = {
+      performance: [],
+      accessibility: [],
+      seo: [],
+      visual: [],
+      e2e: []
+    };
+
+    // Run appropriate tests based on suite argument
+    for (const url of urls) {
+      if (!suite || suite === 'performance') {
+        results.performance.push(await performanceTests.run(url));
+      }
+      if (!suite || suite === 'accessibility') {
+        results.accessibility.push(await accessibilityTests.run(url));
+      }
+      if (!suite || suite === 'seo' || suite === 'visual' || suite === 'e2e') {
+        results[suite].push(await pageTests.run(url, suite));
+      }
     }
-})();
+
+    // Generate and send report
+    const reportPath = await reportGenerator.generate(results);
+    await emailSender.sendReport(reportPath);
+
+    logger.info('Testing completed successfully');
+  } catch (error) {
+    logger.error('Error during test execution:', error);
+    process.exit(1);
+  }
+}
+
+runTests();
