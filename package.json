@@ -1,0 +1,42 @@
+{
+  "name": "website-testing-framework",
+  "version": "1.0.0",
+  "description": "A comprehensive automated testing framework for web properties",
+  "main": "src/index.js",
+  "scripts": {
+    "test": "node src/index.js",
+    "test:perf": "node src/index.js --suite=performance",
+    "test:a11y": "node src/index.js --suite=accessibility",
+    "test:seo": "node src/index.js --suite=seo",
+    "test:visual": "node src/index.js --suite=visual",
+    "test:e2e": "node src/index.js --suite=e2e",
+    "report": "open reports/test-results/latest.html"
+  },
+  "keywords": [
+    "testing",
+    "automation",
+    "accessibility",
+    "performance",
+    "seo",
+    "visual-regression"
+  ],
+  "author": "Gymnarctos Studios LLC",
+  "license": "MIT",
+  "dependencies": {
+    "@axe-core/webdriverjs": "^4.7.0",
+    "dotenv": "^16.0.3",
+    "lighthouse": "^10.1.0",
+    "nodemailer": "^6.9.3",
+    "puppeteer": "^20.5.0",
+    "selenium-webdriver": "^4.9.2",
+    "winston": "^3.9.0"
+  },
+  "devDependencies": {
+    "eslint": "^8.41.0",
+    "eslint-config-prettier": "^8.8.0",
+    "prettier": "^2.8.8"
+  },
+  "engines": {
+    "node": ">=14.0.0"
+  }
+}
